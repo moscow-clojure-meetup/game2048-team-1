@@ -25,10 +25,36 @@
 
 (def *model (atom (new-model 4 4)))
 
-(defn shift-left  [model] model)
-(defn shift-right [model] model)
-(defn shift-up    [model] model)
-(defn shift-down  [model] model)
+(defn modinc [x m] (mod (inc x) m))
+(defn moddec [x m] (mod (+ x (dec m)) m))
+
+(defn shift-left  [model]
+  (let [{:keys [tiles width height]} model]
+    (assoc model :tiles
+      (into {}
+        (for [[[x y] v] tiles]
+          [[(moddec x width) y] v])))))
+
+(defn shift-right [model]
+  (let [{:keys [tiles width height]} model]
+    (assoc model :tiles
+      (into {}
+        (for [[[x y] v] tiles]
+          [[(modinc x width) y] v])))))
+
+(defn shift-up    [model]
+  (let [{:keys [tiles width height]} model]
+    (assoc model :tiles
+      (into {}
+        (for [[[x y] v] tiles]
+          [[x (moddec y height)] v])))))
+
+(defn shift-down  [model]
+  (let [{:keys [tiles width height]} model]
+    (assoc model :tiles
+      (into {}
+        (for [[[x y] v] tiles]
+          [[x (modinc y height)] v])))))
 
 (rum/defc board [model]
   [:.board
