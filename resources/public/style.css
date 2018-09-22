@@ -2,4 +2,21 @@
 tr, td, table, tbody { padding: 0; margin: 0; border-collapse: collapse; }
 
 .board { padding: 5px; float: left; background: #BBADA2; border-radius: 10px; }
-.cell { width: 100px; height: 100px; background: #EEE4DC; margin: 5px; display: inline-block; color: #786F67; text-align: center; vertical-align: middle; font-size: 75px; line-height: 100px; font-weight: bold; border-radius: 4px; }
+.cell { width: 100px; height: 100px; margin: 5px; display: inline-block; text-align: center; vertical-align: middle; font-size: 75px; line-height: 100px; font-weight: bold; border-radius: 4px; }
+
+.cell      { background: #CCC0B6; color: #786F67; }
+.cell_2    { background: #EEE4DC; color: #786F67; }
+.cell_4    { background: #ECE0CA; color: #786F67; }
+.cell_8    { background: #F0B181; color: #f9f6f2; }
+.cell_16   { background: #E88D5E; color: #f9f6f2; }
+.cell_32   { background: #F17C69; color: #f9f6f2; }
+.cell_64   { background: #E55B44; color: #f9f6f2; }
+.cell_128  { background: #F1D77A; color: #f9f6f2; }
+.cell_256  { background: #edcc61; color: #f9f6f2; }
+.cell_512  { background: #E2BE49; color: #f9f6f2; }
+.cell_1024 { background: #edc53f; color: #f9f6f2; }
+.cell_2048 { background: #edc22e; color: #f9f6f2; }
+
+.cell_16, .cell_32, .cell_64 { font-size: 68px; }
+.cell_128, .cell_256, .cell_512 { font-size: 50px; }
+.cell_1024, .cell_2048 { font-size: 33px; }

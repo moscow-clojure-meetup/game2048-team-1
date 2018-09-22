@@ -13,7 +13,7 @@
   (assoc {}
     :tiles (into {} (for [x (range 0 w)
                           y (range 0 h)]
-                      [[x y] nil]))
+                      [[x y] (rand-nth [nil 2 4 8 16 32 64 128 256 512 1024 2048])]))
     :width  w
     :height h
     :score  0))
@@ -24,8 +24,9 @@
   [:.board
     (for [y (range 0 (:height model))]
       [:.row
-        (for [x (range 0 (:width model))]
-          [:.cell (get model [x y])])])])
+        (for [x (range 0 (:width model))
+              :let [val (get (:tiles model) [x y])]]
+          [:.cell {:class (when (some? val) (str "cell_" val))} val])])])
 
 (rum/defc game []
   [:.game
