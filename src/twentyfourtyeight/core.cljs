@@ -75,8 +75,7 @@
                                           {[x new-y] v})
                                         {[x y] v}))))
                            {}
-                           (:tiles model))))
-
+                           (into {} (reverse (:tiles model))))))
 
 (defn shift* [shift-function model]
   (loop [current-model model]
