@@ -41,21 +41,31 @@
         (for [[[x y] v] tiles]
           [[(modinc x width) y] v])))))
 
-(defn shift-up [model]
+(defn shift-up* [model]
   (assoc model
          :tiles (reduce-kv (fn [acc [x y] v]
                              (let [new-x x
-                                   new-y (dec y)]
+                                   new-y (dec y)
+                                   new-value (get acc [x y])
+                                   old-value (get acc [x new-y])]
                                (merge (dissoc acc [x y])
-                                      (if (and (= (get acc [x y])
-                                                  (get acc [x new-y]))
+                                      (if (and (= old-value
+                                                  new-value)
                                                (> y 0))
-                                        (if (get acc [x y])
+                                        (if old-value
                                           {[x new-y] (* v 2)}
                                           {[x new-y] v})
                                         {[x y] v}))))
                            {}
                            (:tiles model))))
+
+(defn shift-up [model]
+  (loop [current-model model]
+    (let [new-model (shift-up* current-model)]
+      (if (= new-model
+             current-model)
+        new-model
+        (recur new-model)))))
 
 (defn shift-down  [model]
   (let [{:keys [tiles width height]} model]
