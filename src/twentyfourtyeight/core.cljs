@@ -8,16 +8,32 @@
 ;;  [0 1] => nil,
 ;;  ...,
 ;;  :score => 1000}
-(def model
+
+(defn new-model [w h]
   (assoc
     (into {}
-      (for [x (range 0 4)
-            y (range 0 4)]
+      (for [x (range 0 w)
+            y (range 0 h)]
         [[x y] nil]))
-    :score 0))
+    :width  w
+    :height h
+    :score  0
+    [2 1]   2
+    [1 3]   2))
+
+(def *model (atom (new-model 4 4)))
+
+(rum/defc board [model]
+  [:.board
+    (for [y (range 0 (:height model))]
+      [:.row
+        (for [x (range 0 (:width model))]
+          [:.cell
+            [:.cell_value (get model [x y])]])])])
 
 (rum/defc game []
-  [:div "Hello world"])
+  [:.game
+    (board @*model)])
 
 (defn ^:export refresh []
   (rum/mount (game) (js/document.getElementById "mount")))
