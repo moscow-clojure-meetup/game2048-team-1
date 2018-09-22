@@ -29,7 +29,7 @@
        { :main           twentyfourtyeight.core
          :output-to      "resources/public/main.js"
          :output-dir     "resources/public/none"
-         :asset-path     "resources/public/none"
+         :asset-path     "none"
          :optimizations  :none
          :source-map     true
          :compiler-stats true
