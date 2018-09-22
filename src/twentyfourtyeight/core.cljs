@@ -59,23 +59,35 @@
                            {}
                            (:tiles model))))
 
+(defn shift-down* [model]
+  (assoc model
+         :tiles (reduce-kv (fn [acc [x y] v]
+                             (let [new-x x
+                                   new-y (inc y)
+                                   new-value (get acc [x y])
+                                   old-value (get acc [x new-y])]
+                               (merge (dissoc acc [x y])
+                                      (if (and (= old-value
+                                                  new-value)
+                                               (< y (:height model)))
+                                        (if old-value
+                                          {[x new-y] (* v 2)}
+                                          {[x new-y] v})
+                                        {[x y] v}))))
+                           {}
+                           (:tiles model))))
+
+
 (defn shift* [shift-function model]
   (loop [current-model model]
-    (let [new-model (shift-up* current-model)]
+    (let [new-model (shift-function current-model)]
       (if (= (:tiles new-model)
              (:tiles current-model))
         new-model
         (recur new-model)))))
 
 (def shift-up (partial shift* shift-up*))
-
-
-(defn shift-down  [model]
-  (let [{:keys [tiles width height]} model]
-    (assoc model :tiles
-      (into {}
-        (for [[[x y] v] tiles]
-          [[x (modinc y height)] v])))))
+(def shift-down (partial shift* shift-down*))
 
 (defn game-over? [model]
   (empty? (for [x (range 0 (:width model))
