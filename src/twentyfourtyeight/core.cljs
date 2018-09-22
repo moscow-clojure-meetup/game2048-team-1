@@ -1,4 +1,6 @@
-(ns twentyfourtyeight.core)
+(ns twentyfourtyeight.core
+  (:require
+    [rum.core :as rum]))
 
 (enable-console-print!)
 
@@ -14,5 +16,8 @@
         [[x y] nil]))
     :score 0))
 
+(rum/defc game []
+  [:div "Hello world"])
+
 (defn ^:export refresh []
-  (println "Hello"))
+  (rum/mount (game) (js/document.getElementById "mount")))
