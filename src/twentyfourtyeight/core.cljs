@@ -69,7 +69,7 @@
                                (merge (dissoc acc [x y])
                                       (if (and (= old-value
                                                   new-value)
-                                               (< y (:height model)))
+                                               (< y (dec (:height model))))
                                         (if old-value
                                           {[x new-y] (* v 2)}
                                           {[x new-y] v})
