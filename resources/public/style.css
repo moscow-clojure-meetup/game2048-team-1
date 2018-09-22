@@ -3,8 +3,10 @@ tr, td, table, tbody { padding: 0; margin: 0; border-collapse: collapse; }
 
 div, button { font-weight: bold; }
 
-.board { padding: 5px; float: left; background: #BBADA2; border-radius: 10px; }
+.board { padding: 5px; float: left; background: #BBADA2; border-radius: 10px; position: relative; }
 .cell { width: 100px; height: 100px; margin: 5px; display: inline-block; text-align: center; vertical-align: middle; font-size: 75px; line-height: 100px; border-radius: 4px; user-select: none; }
+
+.game-over { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); color: white; font-size: 50px; display: flex; align-items: center; justify-content: center; }
 
 .cell      { background: #CCC0B6; color: #786F67; }
 .cell_2    { background: #EEE4DC; color: #786F67; }

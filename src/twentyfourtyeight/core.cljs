@@ -8,9 +8,7 @@
   (let [free (for [[coord val] tiles
                 :when (nil? val)]
                 coord)]
-    (if (empty? free)
-      tiles
-      (assoc tiles (rand-nth free) (rand-nth [2 4])))))
+    (assoc tiles (rand-nth free) (rand-nth [2 4]))))
 
 (defn new-model [w h]
   (assoc {}
@@ -21,7 +19,8 @@
     :width  w
     :height h
     :score  0
-    :best   0))
+    :best   0
+    :game-over? false))
 
 (def *model (atom (new-model 4 4)))
 
@@ -65,8 +64,16 @@
         (for [[[x y] v] tiles]
           [[x (modinc y height)] v])))))
 
+(defn game-over? [model]
+  (empty? (for [x (range 0 (:width model))
+                y (range 0 (:height model))
+                :when (nil? (get (:tiles model) [x y]))]
+            [x y])))
+
 (rum/defc board [model]
   [:.board
+    (when (:game-over? model)
+      [:.game-over "Game over"])
     (for [y (range 0 (:height model))]
       [:.row
         (for [x (range 0 (:width model))
@@ -77,12 +84,21 @@
   (cond-> (new-model (:width model) (:height model))
     (> (:score model) (:best model)) (assoc :best (:score model))))
 
+(defn make-turn! [f]
+  (when-not (:game-over? @*model)
+    (swap! *model
+      (fn [model]
+        (let [model' (f model)]
+          (if (game-over? model')
+            (assoc model' :game-over? true)
+            (update model' :tiles add-tile)))))))
+
 (defn handle-key [e]
   (case (.-keyCode e)
-    37 (swap! *model shift-left)
-    38 (swap! *model shift-up)
-    39 (swap! *model shift-right)
-    40 (swap! *model shift-down)
+    37 (make-turn! shift-left)
+    38 (make-turn! shift-up)
+    39 (make-turn! shift-right)
+    40 (make-turn! shift-down)
     nil))
 
 (rum/defc game
