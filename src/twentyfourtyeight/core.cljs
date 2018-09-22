@@ -19,7 +19,7 @@
     :height h
     :score  0
     [2 1]   2
-    [1 3]   2))
+    [1 3]   2048))
 
 (def *model (atom (new-model 4 4)))
 
@@ -28,8 +28,7 @@
     (for [y (range 0 (:height model))]
       [:.row
         (for [x (range 0 (:width model))]
-          [:.cell
-            [:.cell_value (get model [x y])]])])])
+          [:.cell (get model [x y])])])])
 
 (rum/defc game []
   [:.game

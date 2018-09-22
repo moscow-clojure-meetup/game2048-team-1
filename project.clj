@@ -9,6 +9,7 @@
    [lein-figwheel "0.5.16"]]
   :figwheel {
     :repl false
+    :css-dirs ["resources/public"]
   }
   :cljsbuild
   { :builds
@@ -22,7 +23,7 @@
          :pretty-print   false
          :compiler-stats true
          :parallel-build true }}
-     
+
      { :id "none"
        :source-paths ["src"]
        :compiler
@@ -33,7 +34,7 @@
          :optimizations  :none
          :source-map     true
          :compiler-stats true
-         :parallel-build true }       
+         :parallel-build true }
        :figwheel {
          :on-jsload "twentyfourtyeight.core/refresh"
        }}]}
