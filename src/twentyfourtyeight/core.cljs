@@ -10,16 +10,13 @@
 ;;  :score => 1000}
 
 (defn new-model [w h]
-  (assoc
-    (into {}
-      (for [x (range 0 w)
-            y (range 0 h)]
-        [[x y] nil]))
+  (assoc {}
+    :tiles (into {} (for [x (range 0 w)
+                          y (range 0 h)]
+                      [[x y] nil]))
     :width  w
     :height h
-    :score  0
-    [2 1]   2
-    [1 3]   2048))
+    :score  0))
 
 (def *model (atom (new-model 4 4)))
 
