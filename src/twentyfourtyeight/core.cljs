@@ -20,6 +20,11 @@
 
 (def *model (atom (new-model 4 4)))
 
+(defn shift-left  [model] model)
+(defn shift-right [model] model)
+(defn shift-up    [model] model)
+(defn shift-down  [model] model)
+
 (rum/defc board [model]
   [:.board
     (for [y (range 0 (:height model))]
