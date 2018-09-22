@@ -11,6 +11,7 @@
                [x y])]
     (update model :tiles assoc (rand-nth free) (rand-nth [2 4]))))
 
+;; {[0 0] => 32}
 (defn new-model [w h]
   (-> {}
     (assoc
@@ -70,53 +71,6 @@
               i (range 0 (count vals'))]
           [[(+ (:width model) (- (count vals')) i) y] (nth vals' i)])))))
 
-(defn shift-up* [model]
-  (assoc model
-         :tiles (reduce-kv (fn [acc [x y] v]
-                             (let [new-x x
-                                   new-y (dec y)
-                                   new-value (get acc [x y])
-                                   old-value (get acc [x new-y])]
-                               (merge (dissoc acc [x y])
-                                      (if (and (= old-value
-                                                  new-value)
-                                               (> y 0))
-                                        (if old-value
-                                          {[x new-y] (* v 2)}
-                                          {[x new-y] v})
-                                        {[x y] v}))))
-                           {}
-                           (:tiles model))))
-
-(defn shift-down* [model]
-  (assoc model
-         :tiles (reduce-kv (fn [acc [x y] v]
-                             (let [new-x x
-                                   new-y (inc y)
-                                   new-value (get acc [x y])
-                                   old-value (get acc [x new-y])]
-                               (merge (dissoc acc [x y])
-                                      (if (and (= old-value
-                                                  new-value)
-                                               (< y (dec (:height model))))
-                                        (if old-value
-                                          {[x new-y] (* v 2)}
-                                          {[x new-y] v})
-                                        {[x y] v}))))
-                           {}
-                           (into {} (reverse (:tiles model))))))
-
-(defn shift* [shift-function model]
-  (loop [current-model model]
-    (let [new-model (shift-function current-model)]
-      (if (= (:tiles new-model)
-             (:tiles current-model))
-        new-model
-        (recur new-model)))))
-
-; (def shift-up (partial shift* shift-up*))
-; (def shift-down (partial shift* shift-down*))
-
 (defn shift-up [model]
   (update model :tiles
     (fn [tiles]
@@ -168,9 +122,10 @@
     (swap! *model
       (fn [model]
         (let [model' (f model)]
-          (if (game-over? model')
-            (assoc model' :game-over? true)
-            (-> model' add-tile)))))))
+          (cond
+            (= model model')    model
+            (game-over? model') (assoc model' :game-over? true)
+            :else               (-> model' add-tile)))))))
 
 (defn handle-key [e]
   (case (.-keyCode e)
