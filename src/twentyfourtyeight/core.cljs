@@ -4,42 +4,71 @@
 
 (enable-console-print!)
 
-(defn add-tile [tiles]
-  (let [free (for [[coord val] tiles
-                :when (nil? val)]
-                coord)]
-    (assoc tiles (rand-nth free) (rand-nth [2 4]))))
+(defn add-tile [model]
+  (let [free (for [x (range 0 (:width model))
+                   y (range 0 (:height model))
+                :when (nil? (get (:tiles model) [x y]))]
+               [x y])]
+    (update model :tiles assoc (rand-nth free) (rand-nth [2 4]))))
 
 (defn new-model [w h]
-  (assoc {}
-    :tiles  (-> (into {} (for [x (range 0 w)
-                               y (range 0 h)]
-                           [[x y] nil #_(rand-nth [nil 2 4 8 16 32 64 128 256 512 1024 2048])]))
-                (add-tile))
-    :width  w
-    :height h
-    :score  0
-    :best   0
-    :game-over? false))
+  (-> {}
+    (assoc
+      :tiles  (into {} (for [x (range 0 w)
+                            y (range 0 h)]
+                        [[x y] nil]))
+      :width  w
+      :height h
+      :score  0
+      :best   0
+      :game-over? false)
+    (add-tile)))
 
 (def *model (atom (new-model 4 4)))
 
 (defn modinc [x m] (mod (inc x) m))
 (defn moddec [x m] (mod (+ x (dec m)) m))
 
-(defn shift-left  [model]
-  (let [{:keys [tiles width height]} model]
-    (assoc model :tiles
+(defn collapse [vals]
+  (loop [i 0
+         res []]
+    (cond
+      (== i (count vals))
+      res
+      (== i (dec (count vals)))
+      (recur (inc i) (conj res (nth vals i)))
+
+      (= (nth vals i) (nth vals (inc i)))
+      (recur (+ i 2) (conj res (+ (nth vals i) (nth vals (inc i)))))
+
+      :else
+      (recur (inc i) (conj res (nth vals i))))))
+
+(defn shift-left [model]
+  (update model :tiles
+    (fn [tiles]
       (into {}
-        (for [[[x y] v] tiles]
-          [[(moddec x width) y] v])))))
+        (for [y (range 0 (:height model))
+              :let [vals (for [x     (range (dec (:width model)) -1 -1)
+                               :let  [val (get tiles [x y])]
+                               :when (some? val)]
+                           val)
+                    vals' (collapse vals)]
+              i (range 0 (count vals'))]
+          [[(- (count vals') 1 i) y] (nth vals' i)])))))
 
 (defn shift-right [model]
-  (let [{:keys [tiles width height]} model]
-    (assoc model :tiles
+  (update model :tiles
+    (fn [tiles]
       (into {}
-        (for [[[x y] v] tiles]
-          [[(modinc x width) y] v])))))
+        (for [y (range 0 (:height model))
+              :let [vals (for [x (range 0 (:width model))
+                               :let [val (get tiles [x y])]
+                               :when (some? val)]
+                           val)
+                    vals' (collapse vals)]
+              i (range 0 (count vals'))]
+          [[(+ (:width model) (- (count vals')) i) y] (nth vals' i)])))))
 
 (defn shift-up* [model]
   (assoc model
@@ -115,7 +144,7 @@
         (let [model' (f model)]
           (if (game-over? model')
             (assoc model' :game-over? true)
-            (update model' :tiles add-tile)))))))
+            (-> model' add-tile)))))))
 
 (defn handle-key [e]
   (case (.-keyCode e)
