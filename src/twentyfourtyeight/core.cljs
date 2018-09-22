@@ -59,13 +59,16 @@
                            {}
                            (:tiles model))))
 
-(defn shift-up [model]
+(defn shift* [shift-function model]
   (loop [current-model model]
     (let [new-model (shift-up* current-model)]
-      (if (= new-model
-             current-model)
+      (if (= (:tiles new-model)
+             (:tiles current-model))
         new-model
         (recur new-model)))))
+
+(def shift-up (partial shift* shift-up*))
+
 
 (defn shift-down  [model]
   (let [{:keys [tiles width height]} model]
