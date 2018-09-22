@@ -114,8 +114,34 @@
         new-model
         (recur new-model)))))
 
-(def shift-up (partial shift* shift-up*))
-(def shift-down (partial shift* shift-down*))
+; (def shift-up (partial shift* shift-up*))
+; (def shift-down (partial shift* shift-down*))
+
+(defn shift-up [model]
+  (update model :tiles
+    (fn [tiles]
+      (into {}
+        (for [x (range 0 (:width model))
+              :let [vals (for [y     (range (dec (:height model)) -1 -1)
+                               :let  [val (get tiles [x y])]
+                               :when (some? val)]
+                           val)
+                    vals' (collapse vals)]
+              i (range 0 (count vals'))]
+          [[x (- (count vals') 1 i)] (nth vals' i)])))))
+
+(defn shift-down [model]
+  (update model :tiles
+    (fn [tiles]
+      (into {}
+        (for [x (range 0 (:width model))
+              :let [vals (for [y (range 0 (:height model))
+                               :let [val (get tiles [x y])]
+                               :when (some? val)]
+                           val)
+                    vals' (collapse vals)]
+              i (range 0 (count vals'))]
+          [[x (+ (:height model) (- (count vals')) i)] (nth vals' i)])))))
 
 (defn game-over? [model]
   (empty? (for [x (range 0 (:width model))
