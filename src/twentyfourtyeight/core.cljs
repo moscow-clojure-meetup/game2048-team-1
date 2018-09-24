@@ -27,9 +27,6 @@
 
 (def *model (atom (new-model 4 4)))
 
-(defn modinc [x m] (mod (inc x) m))
-(defn moddec [x m] (mod (+ x (dec m)) m))
-
 (defn collapse [vals]
   (loop [i 0
          res []]
